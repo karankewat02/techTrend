@@ -110,7 +110,7 @@ def find_stock_video(data):
         if video_url:
             return {"query":query,"video_url":video_url}
         else:
-            return {"query":query,"error":"No videos found with width of 426 pixels"}
+            return {"query":query,"error":"No videos found for width of 426 pixels"}
     else:
         return {"query":query,"error":"No videos found"}
 
@@ -148,10 +148,9 @@ def sum_text(request):
         text_to_speech_with_sentiment(summarize_data,f"{video_topic}.mp3")
 
         #todo STEP 5: Combine the video and audio
-
-
         url = video_url['video_url']
         combine_video_audio(url, f"{video_topic}.mp3")
+
 
         #todo STEP 6: Return the summary, video topic, video url
 
