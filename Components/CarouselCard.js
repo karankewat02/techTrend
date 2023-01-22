@@ -5,17 +5,6 @@ import axios from "axios";
 const windowWidth = Dimensions.get('window').width;
 
 const CarouselCard = (props) => {
-    // const navigation = props.navigation;
-  
-    // const makeRequest = async () => {
-    //     await axios.get('http://192.168.1.47:3000/')
-    //     .then(response => {
-    //       console.log(response.data);
-    //     })
-    //     .catch(error => {
-    //       console.log(error);
-    //     });
-    // }
 
     const [data, setdata] = useState([
         {
@@ -25,46 +14,23 @@ const CarouselCard = (props) => {
             description: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quod."
         },
       ]);
+
     useEffect(() => {
-        // makeRequest();
         setdata(props.data)
     }, []);
-    const navi = () => {
-        makeRequest();
-        // navigation.navigate('NewsDetails', { newsId: props.newsId })
-        console.log("Navigating to NewsDetails")
-    }
-
-    const handelRead = () => {
-        Linking.openURL(data?.link?data.link:"https://www.google.com")
-    }
-
+    
     const handelMakeVideo = () => {
-        console.log("Get short Video")
+      props.navigate('VideoScreen', {data:data})
     }
 
 
     return (
-      <View style={{marginBottom:16}}>
-        <View style={styles.trendingImageContainer}>
-          <Image source={{uri:`${data?.image_url?data.image_url:"https://picsum.photos/200/300"}`}} resizeMode='cover' style={styles.trendingImage} />
-          <Text style={styles.trendingNewsText}>{data?.title?data.title:"News Headline"}</Text>
-        </View>
-
-        <View style={styles.Options}>
-        {data?.content?(
-          <TouchableOpacity style={{backgroundColor:"#0081C9", paddingHorizontal:16, paddingVertical:12,marginBottom:16}} onPress={handelMakeVideo}>
-              <Text style={{fontSize:14, color:"#fff", fontWeight:"700"}}>Get short Video</Text>
-          </TouchableOpacity>
-          ):<></> 
-        }
-        <TouchableOpacity style={{backgroundColor:"#0081C9", paddingHorizontal:16, paddingVertical:12,marginBottom:16,marginHorizontal:'auto'}} onPress={handelRead}>
-              <Text style={{fontSize:14, color:"#fff", fontWeight:"700"}}>Read Full Article</Text>
-          </TouchableOpacity>
-          
-        </View>
-
-      </View>
+      <TouchableOpacity onPress={handelMakeVideo}>
+            <View style={styles.trendingImageContainer}>
+              <Image source={{uri:`${data?.image_url?data.image_url:"https://picsum.photos/200/300"}`}} resizeMode='cover' style={styles.trendingImage} />
+              <Text style={styles.trendingNewsText}>{data?.title?data.title:"News Title"}</Text>
+            </View>
+      </TouchableOpacity>
     )
   }
   
@@ -72,33 +38,27 @@ const CarouselCard = (props) => {
   
   const styles = StyleSheet.create({
       
+      trendingImageContainer:{
+        position:'relative',
+        width:windowWidth-50,
+        height:"100%",
+        marginRight:10,
+      },
         trendingImage:{
-          width:'100%',
-          height:'100%',
-        },
-        trendingImageContainer:{
-          flexBasis: (windowWidth/2)-40,
-          marginBottom:4,
-          marginTop:16,
-          marginHorizontal:12,
-          position:'relative',
-          overflow:'hidden',
-          borderRadius:6,
+          width:"100%",
+          height:"100%",
+          zIndex:1,
         },
         trendingNewsText:{
           position:'absolute',
           bottom:0,
           left:0,
-          width:'100%',
-          padding:6,
-          color:'#FFF',
-          backgroundColor:'#00000080'
-        },
-        Options:{
-          flexDirection:'row',
-          justifyContent:'space-between',
-          marginHorizontal:16,
-          alignItems:'center',
-          
+          right:0,
+          backgroundColor:'rgba(0,0,0,0.5)',
+          color:'white',
+          padding:10,
+          fontSize:16,
+          fontWeight:'bold',
+          zIndex:2,
         }
   })

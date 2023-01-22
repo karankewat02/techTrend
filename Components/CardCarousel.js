@@ -1,33 +1,51 @@
 import { StyleSheet,ScrollView, Text, View, Dimensions } from 'react-native'
-import React from 'react'
+import React ,{ useState,useEffect }from 'react'
 import CarouselCard from './CarouselCard';
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
+import axios from 'axios';
+import Loading from '../Screens/Loading';
 
-const CardCarousel = () => {
-  const data = [
-    {id: 1, title: 'Card 1', image: '../assets/card1.jpeg'},
-    {id: 2, title: 'Card 2', image: '../assets/card2.jpeg'},
-    {id: 3, title: 'Card 3', image: '../assets/card3.jpeg'},
-    {id: 4, title: 'Card 4', image: '../assets/card4.jpeg'},
-    {id: 5, title: 'Card 5', image: '../assets/card5.jpeg'},
-  ];
+const CardCarousel = (props) => {
+
+  const [data, setdata] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    makeRequest();
+  }, []);
+
+  const makeRequest = async () => {
+    setLoading(true);
+    await axios.get('http://192.168.1.47:3000/topnews')
+    .then(response => {
+      // console.log(response.data);
+      setdata(response.data);      
+      setLoading(false);
+    })
+    .catch(error => {
+      console.log(error);
+    });
+  }
+
   return (
-    <ScrollView horizontal={true} style={{height:Math.trunc(windowHeight)-100,paddingBottom:200,}}>               
+    <>
+    
+    {loading ? (
+      <Loading/>
+    ) : (
+    <ScrollView horizontal={true}>               
       {
-        data.map((e)=>{
+        data.map((e,index)=>{
           return(
-            <CarouselCard
-            title={e.title} 
-            key={e.id}
-            imgURL = {e.image} 
-            />
+              <CarouselCard navigate={props.navigation} key={index} data={e} />
             )
           })
         }
 
       </ScrollView>
-
+    )}
+    </>
   )
 }
 
