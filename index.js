@@ -25,6 +25,21 @@ app.get('/news', (req, res) => {
     });
 });
 
+const TOPNEWSAPI = `https://newsdata.io/api/1/news?apikey=${APIKEY}&language=en`;
+app.get('/topNews', (req, res) => {
+  axios.get(TOPNEWSAPI)
+    .then(response => {
+      const topFive = response.data.results
+        .filter(obj => obj.content)
+        .slice(0, 5);
+      res.send(topFive);
+    })
+    .catch(error => {
+      console.log(error);
+    });
+});
+
+
 
 //post request
 app.post('/news', (req, res) => {
