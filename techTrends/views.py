@@ -14,6 +14,18 @@ import tempfile
 import os
 from moviepy.editor import VideoFileClip, AudioFileClip
 
+
+from django.http import HttpResponse
+from django.urls import reverse
+
+def generate_video(request):
+    # code to combine video and audio
+    video_path = 'output.mp4'
+    video_url = request.build_absolute_uri(reverse('media', args=[video_path]))
+    return HttpResponse(video_url)
+
+
+
 def combine_video_audio(video_url, audio_file):
     video_data = requests.get(video_url).content
     with tempfile.NamedTemporaryFile(delete=False) as video_file:
@@ -49,7 +61,7 @@ def text_to_speech_with_sentiment(text, filename='output.mp3'):
     elif sentiment["compound"] > -0.5 and sentiment["compound"] < 0.5:
         rate = 120 # neutral sentiment
     else:
-        rate = 70 # decrease rate for negative sentiment
+        rate = 100 # decrease rate for negative sentiment
     engine.setProperty('rate', rate)
     # curr_dir = os.path.dirname(os.path.abspath(__file__))
     # filename = os.path.join(curr_dir, filename)
@@ -59,7 +71,7 @@ def text_to_speech_with_sentiment(text, filename='output.mp3'):
 
 
 
-APIKEY ='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'
+APIKEY ='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'
 
 
 openai.api_key = APIKEY
@@ -126,9 +138,10 @@ def get_video(request):
     video_path = 'output.mp4'
     response = FileResponse(open(video_path, 'rb'))
     response['Content-Type'] = 'video/mp4'
-    response['Content-Disposition'] = 'attachment; filename="output.mp4"'
+    response['Content-Disposition'] = 'inline; filename="output.mp4"'
     return response
 
+    
 @csrf_exempt
 def sum_text(request):
     if request.method == 'POST':
@@ -143,17 +156,15 @@ def sum_text(request):
 
         #todo STEP 3: Find a stock video related to the topic
         video_url = find_stock_video(video_topic)
+        
 
         #todo STEP 4: Convert the text to speech
-        text_to_speech_with_sentiment(summarize_data,f"{video_topic}.mp3")
+        text_to_speech_with_sentiment(summarize_data,)
 
         #todo STEP 5: Combine the video and audio
         url = video_url['video_url']
-        combine_video_audio(url, f"{video_topic}.mp3")
+        combine_video_audio(url, "output.mp3")
 
-
-        #todo STEP 6: Return the summary, video topic, video url
-
-        return JsonResponse({'summary': summarize_data, 'video_topic': video_topic, 'video_url': video_url, 'error': None})
+        return JsonResponse({'summary': summarize_data, 'video_topic': video_topic, 'video_url': video_url ,'error': None})
     else:
         return JsonResponse({'error': 'Invalid request method', 'summary': None, 'video_topic': None, 'video_url': None})
